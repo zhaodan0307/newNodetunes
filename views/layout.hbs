@@ -39,8 +39,10 @@
                     <a class="nav-link" href="/artists">Artists</a>
                 </li>
             </ul>
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav navbar-text">
+                <!--这里的user是在session里面的,而我们要回到index.js 和artist.js的 controller里面加入user传到前端-->
                 {{#if user}}
+
                     <li class="nav-item">
                         <a class="nav-link" href="#">{{user.username}}</a>
                     </li>

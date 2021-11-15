@@ -19,7 +19,9 @@ router.get('/', (req, res) => {
             console.log(artists)
             res.render('artists/index', {
                 artists: artists,
-                title:'Artist'
+                title:'Artist',
+                user: req.user
+
             })
         }
     })
@@ -29,7 +31,8 @@ router.get('/', (req, res) => {
 // GET: /artists/create => show new artist form.  Now call authCheck first
 router.get('/create', (req, res) => {
     res.render('artists/create', {
-        title: 'Add a New Artist'
+        title: 'Add a New Artist',
+        user: req.user
     })
 })
 
@@ -82,7 +85,8 @@ router.get('/edit/:_id', (req, res) => {
             // load the edit view and pass the selected Artist doc to it for display
             res.render('artists/edit', {
                 title: 'Artist Details',
-                artist: artist
+                artist: artist,
+                user: req.user
             })
         }
     })

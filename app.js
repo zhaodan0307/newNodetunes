@@ -5,6 +5,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var app = express();
+
+
+
 // passport这些是要放在controller之前的，因为要先登录才能具体用
 // passport for auth, express-session for session mgmt
 const passport = require('passport')
@@ -19,19 +23,28 @@ app.use(session({
 }))
 
 // 2 - enable passport w/session support
-//因为我们需要用session去记录登录信息（类似php，）
+//因为我们需要用session去记录登录信息（类似php，）这一步结束后，我们去model建立user model
 app.use(passport.initialize())
 app.use(passport.session())
 
+//第三步把建立的user model连接到passport
+// 3 - link passport to User model with extends passport-local-mongoose
+const User = require('./models/user')
+passport.use(User.createStrategy())
+
+//第四步是读取 和改写 session数据
+// 4 - set passport to read/write User data to/from the session object
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
 
 
 
-
+//加入controllers
 var indexRouter = require('./controllers/index');
 var usersRouter = require('./controllers/users');
 var artistsRouter = require('./controllers/artists');
 
-var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -43,6 +56,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 设置这些controller的路径
 //这个意思是说，如果是进入了homepage/那么就用这个 controller，如果是进入了homepage/users这个就用usercontroller
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
