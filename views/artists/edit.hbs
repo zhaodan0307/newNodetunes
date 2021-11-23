@@ -8,3 +8,61 @@
         <button class="btn btn-primary">Save</button>
     </div>
 </form>
+
+<section>
+    <h2>Add an Album</h2>
+    <form method="post" action="/artists/add-album/{{artist._id}}">
+        <fieldset class="form-group">
+            <label for="title" class="control-label col-2">Title: *</label>
+            <input class="form-control" name="title" id="title" required />
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="year" class="control-label col-2">Year: *</label>
+            <input class="form-control" name="year" id="year" required type="number" min="1500" maxlength="=4" />
+        </fieldset>
+        <fieldset class="form-group">
+            <label for="rating" class="control-label col-2">5-Star Rating: *</label>
+            <input class="form-control" name="rating" id="rating" required type="number" min="1" max="5" maxlength="1" />
+        </fieldset>
+        <div class="offset-2">
+            <button class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</section>
+
+{{# if artist.albums}}
+    <section>
+        <h2>Discography</h2>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>
+                    Title
+                </th>
+                <th>
+                    Year
+                </th>
+                <th>
+                    Rating
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each artist.albums}}
+                <tr>
+                    <td>
+                        {{this.title}}
+                    </td>
+                    <td>
+                        {{this.year}}
+                    </td>
+                    <td>
+                        {{this.rating}}
+                    </td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </section>
+{{/if}}
+

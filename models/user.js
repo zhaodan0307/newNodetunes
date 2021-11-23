@@ -2,10 +2,12 @@
 const mongoose = require('mongoose')
 const plm = require('passport-local-mongoose') // need this module so this model can be used for auth
 
-//第二步，建立一个userSchema
+//第二步，建立一个userSchema，如果只是 local user的话，其实前面两项就够了，但我们需要github的oauth，所以加了后面俩项
 const userSchema = new mongoose.Schema({
     username: String,
     password: String,
+    oauthProvider: String,
+    oauthId: String
 
 })
 

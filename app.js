@@ -7,7 +7,10 @@ var logger = require('morgan');
 
 var app = express();
 
+//globals 里面加入了 passport config（gethub）那个，所以要放前面
+const globals = require('./config/globals')
 
+//passport start here
 
 // passport这些是要放在controller之前的，因为要先登录才能具体用
 // passport for auth, express-session for session mgmt
@@ -37,6 +40,42 @@ passport.use(User.createStrategy())
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
+//passport Github config
+const gitHub = require('passport-github2').Strategy
+
+passport.use(new gitHub({
+        clientID: globals.gitHub.clientID,
+        clientSecret: globals.gitHub.clientSecret,
+        callbackURL: globals.gitHub.callbackURL
+    }, async (accessToken, refreshToken, profile, callback) => {
+        try {
+            //查一下，是不是这个github user已经在了，
+            // check if GitHub user already exists in our db
+            const user = await User.findOne({ oauthId: profile.id })
+            if (user) {
+                return callback(null, user) // user already exist so return user object and continue
+            }
+            else {
+                // 如果没有了，那么就建立一下存入db
+                // create new GitHub user in our db and return the new user object to the calling function
+                const newUser = new User({
+                    username: profile.username,
+                    oauthProvider: 'GitHub',
+                    oauthId: profile.id
+                })
+                const savedUser = await newUser.save()
+                callback(null, savedUser)
+            }
+        }
+        catch (err) {
+            callback(err)
+        }
+    }
+))
+
+//passport config end here
+
+
 
 
 //加入controllers
@@ -65,7 +104,7 @@ app.use('/artists', artistsRouter);
 
 // mongodb connection w/mongoose
 const mongoose = require('mongoose')
-const globals = require('./config/globals')
+
 //这里如果是测试，是不是能连接上服务器
 mongoose.connect(globals.db,{
   useNewUrlParser: true,

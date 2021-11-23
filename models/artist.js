@@ -10,6 +10,7 @@ var artistSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    //nested array for albums, one user to many albums
     albums: [{
         title: String,
         year: Number,

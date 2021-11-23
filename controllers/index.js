@@ -101,4 +101,30 @@ router.post('/login',passport.authenticate('local',{
 
 }))
 
+//GET / logout
+router.get('/logout',((req, res) => {
+  //在logout这个method里，就直接release了session了，
+  req.logout()
+  res.redirect('login')
+
+}))
+
+
+// GET: /github
+//
+router.get('/github', passport.authenticate('github', {
+  scope: ['user:email']
+}))
+
+// GET: /github/callback
+///github/callback这个实在github网站设置的，setting，developer settings里面
+router.get('/github/callback', passport.authenticate('github', {
+  failureRedirect: '/login'
+}), (req, res) => {
+  res.redirect('/artists')
+})
+
+
+
+
 module.exports = router;
